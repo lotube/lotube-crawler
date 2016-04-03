@@ -3,4 +3,5 @@ build/
 dist/
 lotube_crawler.egg-info/
 
+./MANIFEST
 *.pyc
