@@ -1,5 +1,6 @@
 from collections import deque
 
+
 class Crawler:
     """
     BFS based video crawler
@@ -10,7 +11,7 @@ class Crawler:
         self.max_breadth = max_breadth
         self.max_depth = max_depth
         self.site_token = site_token
-        
+
         self.ids = deque()
         self.ids_hash = set()
  
@@ -39,25 +40,24 @@ class Crawler:
             with self._new_extractor_instance() as ext:
                 res = ext.search_term(term, self.max_breadth)
                 for video in res:
-                    self.ids.append(video.id_source)
+                    self.ids.append((video.id_source, 0))
                     self.ids_hash.add(video.id_source)
                     yield video
     
     def _run_related(self):
         expanded = set()
-        
         while self.ids:
-            id_video = self.ids.popleft()
-            
+            video = self.ids.popleft()
+            id_video = video[0]
+            depth = video[1]
+            if depth >= self.max_depth:
+                break
             with self._new_extractor_instance() as ext:
                 res = ext.search_related(id_video, self.max_breadth)
                 selected_videos = filter(lambda x: x.id_source not in expanded and
                                          x.id_source not in self.ids_hash, res)
                 for video in selected_videos:
-                    self.ids.append(video.id_source)
+                    self.ids.append((video.id_source, depth + 1))
                     self.ids_hash.add(video.id_source)
                     yield video
-            self.max_depth -= 1
-            if self.max_depth == 1:
-                break
             expanded.add(id_video)

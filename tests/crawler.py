@@ -14,6 +14,6 @@ class TestCrawler(object):
     #    c.run(['games', 'university'])
         
     def test_crawler_run(self):
-        c = Crawler(site='youtube', max_breadth=2, max_depth=1)
-        for video in c.run(['games', 'willyrex']):
+        c = Crawler(site='youtube', max_breadth=2, max_depth=3)
+        for video in c.run(['games']):
             print video.id_source
